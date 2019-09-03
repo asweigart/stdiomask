@@ -40,7 +40,7 @@ def getpass(prompt='Password: ', mask='*'):
         if key == 13: # Enter key pressed.
             sys.stdout.write('\n')
             return ''.join(enteredPassword)
-        elif key in (8, 127): # Backspace/Del key erases previous output.
+        elif key == 127: # Backspace/Del key erases previous output.
             if len(enteredPassword) > 0:
                 # Erases previous character.
                 sys.stdout.write('\b' + ' ' + '\b')
@@ -49,6 +49,11 @@ def getpass(prompt='Password: ', mask='*'):
         elif 0 <= key <= 31:
             # Do nothing for unprintable characters.
             # TODO: Handle Esc, F1-F12, arrow keys, home, end, insert, del, pgup, pgdn
+            if key == 3:
+                raise KeyboardInterrupt()
+            elif key == 4:
+                sys.stdout.write('\n')
+                return ''.join(enteredPassword)
             pass
         else:
             # Key is part of the password; display the mask character.
