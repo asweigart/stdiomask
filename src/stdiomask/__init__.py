@@ -1,17 +1,40 @@
 # Stdio Mask
 # By Al Sweigart al@inventwithpython.com
 
-__version__ = '0.0.3'
+__version__ = '0.0.3'  # type: str
 
 import sys
 
+STR_TYPE = str # type: type
+RUNNING_PYTHON_2 = sys.version_info[0] == 2  # type: bool
+if RUNNING_PYTHON_2:
+    STR_TYPE = unicode
+
+
+try:
+    from typing import List
+except ImportError:
+    pass # There is no typing module on Python 2, but that's fine because we use the comment-style of type hints.
+
 if sys.platform == 'win32':
-    from msvcrt import getch
+    # For some reason, mypy reports that msvcrt doesn't have getch, ignore this warning:
+    from msvcrt import getch # type: ignore
 
     def getpass(prompt='Password: ', mask='*'):
-        if not isinstance(prompt, str):
+        # type: (str, str) -> str
+
+        if RUNNING_PYTHON_2:
+            # On Python 2, convert `prompt` and `mask` from str to unicode because sys.stdout.write requires unicode.
+            if isinstance(prompt, str):
+                # Mypy in Python 3 mode (the default mode) will complain about the following line:
+                prompt = prompt.decode('utf-8') # type: ignore
+            if isinstance(mask, str):
+                # Mypy in Python 3 mode (the default mode) will complain about the following line:
+                mask = mask.decode('utf-8') # type: ignore
+
+        if not isinstance(prompt, STR_TYPE):
             raise TypeError('prompt argument must be a str, not %s' % (type(prompt).__name__))
-        if not isinstance(mask, str):
+        if not isinstance(mask, STR_TYPE):
             raise TypeError('mask argument must be a zero- or one-character str, not %s' % (type(prompt).__name__))
         if len(mask) > 1:
             raise ValueError('mask argument must be a zero- or one-character str')
@@ -21,18 +44,24 @@ if sys.platform == 'win32':
             import getpass as gp
             return gp.getpass(prompt)
 
-        enteredPassword = []
+        enteredPassword = [] # type: List[str]
         sys.stdout.write(prompt)
         sys.stdout.flush()
         while True:
             key = ord(getch())
             if key == 13: # Enter key pressed.
-                sys.stdout.write('\n')
+                if RUNNING_PYTHON_2:
+                    sys.stdout.write(u'\n')
+                else:
+                    sys.stdout.write('\n')
                 return ''.join(enteredPassword)
             elif key in (8, 127): # Backspace/Del key erases previous output.
                 if len(enteredPassword) > 0:
                     # Erases previous character.
-                    sys.stdout.write('\b' + ' ' + '\b')
+                    if RUNNING_PYTHON_2:
+                        sys.stdout.write(u'\b \b') # \b doesn't erase the character, it just moves the cursor back.
+                    else:
+                        sys.stdout.write('\b \b') # \b doesn't erase the character, it just moves the cursor back.
                     sys.stdout.flush()
                     enteredPassword = enteredPassword[:-1]
             elif 0 <= key <= 31:
@@ -49,6 +78,7 @@ if sys.platform == 'win32':
 else: # macOS and Linux
     import tty, termios
     def getch():
+        # type: () -> str
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
@@ -59,9 +89,20 @@ else: # macOS and Linux
         return ch
 
     def getpass(prompt='Password: ', mask='*'):
-        if not isinstance(prompt, str):
+        # type: (str, str) -> str
+
+        if RUNNING_PYTHON_2:
+            # On Python 2, convert `prompt` and `mask` from str to unicode because sys.stdout.write requires unicode.
+            if isinstance(prompt, str):
+                # Mypy in Python 3 mode (the default mode) will complain about the following line:
+                prompt = prompt.decode('utf-8') # type: ignore
+            if isinstance(mask, str):
+                # Mypy in Python 3 mode (the default mode) will complain about the following line:
+                mask = mask.decode('utf-8') # type: ignore
+
+        if not isinstance(prompt, STR_TYPE):
             raise TypeError('prompt argument must be a str, not %s' % (type(prompt).__name__))
-        if not isinstance(mask, str):
+        if not isinstance(mask, STR_TYPE):
             raise TypeError('mask argument must be a zero- or one-character str, not %s' % (type(prompt).__name__))
         if len(mask) > 1:
             raise ValueError('mask argument must be a zero- or one-character str')
@@ -71,18 +112,24 @@ else: # macOS and Linux
             import getpass as gp
             return gp.getpass(prompt)
 
-        enteredPassword = []
+        enteredPassword = [] # List[str]
         sys.stdout.write(prompt)
         sys.stdout.flush()
         while True:
             key = ord(getch())
             if key == 13: # Enter key pressed.
-                sys.stdout.write('\n')
+                if RUNNING_PYTHON_2:
+                    sys.stdout.write(u'\n')
+                else:
+                    sys.stdout.write('\n')
                 return ''.join(enteredPassword)
             elif key in (8, 127): # Backspace/Del key erases previous output.
                 if len(enteredPassword) > 0:
                     # Erases previous character.
-                    sys.stdout.write('\b' + ' ' + '\b')
+                    if RUNNING_PYTHON_2:
+                        sys.stdout.write(u'\b \b') # \b doesn't erase the character, it just moves the cursor back.
+                    else:
+                        sys.stdout.write('\b \b') # \b doesn't erase the character, it just moves the cursor back.
                     sys.stdout.flush()
                     enteredPassword = enteredPassword[:-1]
             elif 0 <= key <= 31:
