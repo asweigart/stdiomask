@@ -1,14 +1,22 @@
 # Stdio Mask
 # By Al Sweigart al@inventwithpython.com
 
-__version__ = '0.0.4'  # type: str
+__version__ = '0.0.5'  # type: str
 
 import sys
 
+
+"""Notes about making this code backwards-compatible with Python 2:
+sys.stdout.write() can only write unicode strings, not Python 2 str strings.
+I create STR_TYPE to use for isinstance() checks. Also, the u prefix for
+unicode strings causes syntax errors on Python 3.1 and 3.2, so instead I
+pass those strings to STR_TYPE, which is set to unicode() on Python 2,
+which effectively does the same thing as the u prefix.
+"""
 STR_TYPE = str # type: type
 RUNNING_PYTHON_2 = sys.version_info[0] == 2  # type: bool
 if RUNNING_PYTHON_2:
-    STR_TYPE = unicode
+    STR_TYPE = unicode # Ignore the pyflakes warning on this line.
 
 
 try:
@@ -51,7 +59,7 @@ if sys.platform == 'win32':
             key = ord(getch())
             if key == 13: # Enter key pressed.
                 if RUNNING_PYTHON_2:
-                    sys.stdout.write(u'\n')
+                    sys.stdout.write(STR_TYPE('\n'))
                 else:
                     sys.stdout.write('\n')
                 return ''.join(enteredPassword)
@@ -59,7 +67,7 @@ if sys.platform == 'win32':
                 if len(enteredPassword) > 0:
                     # Erases previous character.
                     if RUNNING_PYTHON_2:
-                        sys.stdout.write(u'\b \b') # \b doesn't erase the character, it just moves the cursor back.
+                        sys.stdout.write(STR_TYPE('\b \b')) # \b doesn't erase the character, it just moves the cursor back.
                     else:
                         sys.stdout.write('\b \b') # \b doesn't erase the character, it just moves the cursor back.
                     sys.stdout.flush()
@@ -119,7 +127,7 @@ else: # macOS and Linux
             key = ord(getch())
             if key == 13: # Enter key pressed.
                 if RUNNING_PYTHON_2:
-                    sys.stdout.write(u'\n')
+                    sys.stdout.write(STR_TYPE('\n'))
                 else:
                     sys.stdout.write('\n')
                 return ''.join(enteredPassword)
@@ -127,7 +135,7 @@ else: # macOS and Linux
                 if len(enteredPassword) > 0:
                     # Erases previous character.
                     if RUNNING_PYTHON_2:
-                        sys.stdout.write(u'\b \b') # \b doesn't erase the character, it just moves the cursor back.
+                        sys.stdout.write(STR_TYPE('\b \b')) # \b doesn't erase the character, it just moves the cursor back.
                     else:
                         sys.stdout.write('\b \b') # \b doesn't erase the character, it just moves the cursor back.
                     sys.stdout.flush()
