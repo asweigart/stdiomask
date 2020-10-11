@@ -1,7 +1,7 @@
 # Stdio Mask
 # By Al Sweigart al@inventwithpython.com
 
-__version__ = '0.0.5'  # type: str
+__version__ = '0.0.6'  # type: str
 
 import sys
 
