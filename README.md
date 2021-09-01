@@ -18,16 +18,16 @@ The `getpass.getpass()` function in the Python Standard Library won't display "m
 Typical usage:
 
     >>> import stdiomask
-    >>> stdiomask.getpass()
+    >>> stdiomask.getpass()  # Show * for each typed character.
     Password: *********
     'swordfish'
-    >>> stdiomask.getpass(prompt='PW: ')
+    >>> stdiomask.getpass(prompt='PW: ')  # Show a custom prompt.
     PW: *********
     'swordfish'
-    >>> stdiomask.getpass(mask='X')
+    >>> stdiomask.getpass(mask='X')  # Show a different character when user types.
     Password: XXXXXXXXX
     'swordfish'
-    >>> stdiomask.getpass(mask='') # Falls back and calls getpass.getpass()
+    >>> stdiomask.getpass(mask='') # Don't show anything when user types (falls back and calls getpass.getpass()).
     Password:
     'swordfish'
 
@@ -35,3 +35,8 @@ Contribute
 ----------
 
 If you'd like to contribute to Stdio Mask, check out https://github.com/asweigart/stdiomask
+
+Support
+-------
+
+If you find this project helpful and would like to support its development, [consider donating to its creator on Patreon](https://www.patreon.com/AlSweigart).
