@@ -1,6 +1,16 @@
 Stdio Mask
 ======
 
+THIS MODULE HAS BEEN RENAMED TO PWINPUT. See https://pypi.org/project/pwinput/
+
+No more updates will be made to this module. Please switch to pwinput instead.
+
+You'll need to change `import stdiomask` to `import pwinput` and `stdiomask.getpass()` to `pwinput.pwinput()`.
+
+
+Original README
+---------------
+
 A cross-platform Python module for entering passwords to a stdio terminal and displaying a **** mask, which getpass cannot do.
 
 Installation
@@ -13,7 +23,7 @@ To install with pip, run:
 Quickstart Guide
 ----------------
 
-The `getpass.getpass()` function in the Python Standard Library won't display "mask" characters as you type; it only displays nothing as you type. If you want mask characters to appear, you can use the `stdio.getpass()` function instead.
+The `getpass.getpass()` function in the Python Standard Library won't display "mask" characters as you type; it only displays nothing as you type. If you want mask characters to appear, you can use the `stdiomask.getpass()` function instead.
 
 Typical usage:
 
